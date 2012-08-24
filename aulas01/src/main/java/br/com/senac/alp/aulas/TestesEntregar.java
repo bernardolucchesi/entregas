@@ -1,9 +1,5 @@
 package br.com.senac.alp.aulas;
 
-import java.io.Console;
-
-import org.junit.Assert;
-
 public class TestesEntregar {
 
 	public static void main(String[] args) {
