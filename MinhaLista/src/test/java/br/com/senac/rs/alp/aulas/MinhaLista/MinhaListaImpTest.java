@@ -57,8 +57,23 @@ public class MinhaListaImpTest {
 	}
 
 	@Test
-	public void testTamanho() {
-		fail("Not yet implemented");
+	public void testTamanhoVazio() {
+		
+		MinhaListaImp<String> obj = null;
+		obj = new MinhaListaImp<String>("");
+		int esperado = 0;
+		int resultado = 0;
+		int comparacao = 1;
+		
+		resultado = obj.tamanho();
+		if(esperado == resultado){
+			comparacao = 0;
+		}
+		Assert.assertEquals(
+				"Quando o tamanho da lista for zero deve retornar " + String.valueOf(esperado)
+				+ ", valor retornando: " + String.valueOf(resultado),
+				comparacao, 0);
+		
 	}
 
 	@Test

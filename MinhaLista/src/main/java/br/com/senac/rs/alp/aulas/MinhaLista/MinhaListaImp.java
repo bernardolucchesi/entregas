@@ -1,5 +1,7 @@
 package br.com.senac.rs.alp.aulas.MinhaLista;
 
+import junit.framework.Assert;
+
 public class MinhaListaImp<Tipo> implements MinhaLista<Tipo> {
 
 	private Nodo<Tipo> inicio = null;
@@ -109,6 +111,8 @@ public class MinhaListaImp<Tipo> implements MinhaLista<Tipo> {
 			resultado++;
 		
 		}
+		
+		
 		
 		return resultado;
 		
