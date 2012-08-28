@@ -4,9 +4,17 @@ public class MinhaListaImp<Tipo> implements MinhaLista<Tipo> {
 
 	private Nodo<Tipo> inicio = null;
 	
-	public MinhaListaImp(Tipo valorinicio){
+	public MinhaListaImp(Tipo valorInicio){
 		
-		this.inicio = new Nodo<Tipo>(valorinicio);
+		this.inicio = new Nodo<Tipo>(valorInicio);
+		
+		if(valorInicio == null){
+			
+			throw new IllegalArgumentException();
+			
+		}
+		
+		this.inicio = new Nodo<Tipo>(valorInicio);
 		
 	}
 	
