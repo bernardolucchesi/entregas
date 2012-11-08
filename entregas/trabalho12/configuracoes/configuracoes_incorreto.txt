@@ -1,0 +1,2 @@
+root_dir_incorreto = ./U:/git/trabalho12/configuracoes/
+port_incorreto = 80

@@ -1,0 +1,2 @@
+root_dir = ./U:/git/trabalho12/configuracoes/
+port = 80
