@@ -1,0 +1,9 @@
+ GET ./index.html http/1.1
+     Host: www.google.com
+     
+     HTTP/1.0 200 OK
+     Date: 
+     Server: 
+     Content-Length: 
+     Content-Type: text/html; charset=utf-8
+     Connection: close
