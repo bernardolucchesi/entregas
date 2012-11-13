@@ -11,157 +11,233 @@ import java.util.Map;
 public class Main {
 
 	private static File arquivo = null;
-	private final static String NOME_INDEX = "index.html";
+	private static FileReader reader = null;
+	private static BufferedReader input = null;
+	private static String line = null;
+	private static String[] par = new String[2];
+	private static Map<String, String> hash = new HashMap<String, String>();
 			
 	public static void main(String[] args, String[] args1) {
 		
-		FileReader reader = null;
-		BufferedReader input = null;
-		String line = null;
+		criaArquivo(args[0]);
+		lerArquivo(arquivo);
+		verificaRoot(hash);
+		verificaPort(hash);
 		
-		String[] par = new String[2];
-		Map<String, String> hash = new HashMap<String, String>();
-				
-		if(args == null){
+		criaArquivo(args1[0]);
+		lerArquivoRequisicao(arquivo);
+		verificaGet(hash);
+		verificaHost(hash);
+		
+	}
+	
+	public static File criaArquivo(String argumento){
+		
+		if(argumento == null){
 			System.out.println("ERRO");
 			throw new IllegalArgumentException();
 		} else {
-			String nomeArquivo = args[0];
+			String nomeArquivo = argumento;
 			arquivo = new File(nomeArquivo);
-			if (!arquivo.exists() || arquivo.isDirectory()) {
-				System.out.println("ERRO");
-				throw new IllegalArgumentException();
-			} else {
-				try {
-					reader = new FileReader(arquivo);
-					try {
-						input = new BufferedReader(reader);
-						line = input.readLine();
-
-						while (line != null) {
-							int total = 0;
-							for (int i = 0; i < line.length(); i++) {
-								if (line.charAt(i) == '=') {
-									total++;
-								}
-							}
-							if (total != 1) {
-								System.out.println("ERRO");
-								input.close();
-								throw new IllegalArgumentException();
-							}
-							
-							par = line.split("=");
-							hash.put(par[0].trim(), par[1].trim());
-							line = input.readLine();							
-						}
-						
-						if(!hash.containsKey("root_dir") || !hash.containsKey("port")){
-							input.close();
-							System.out.println("ERRO");
-							throw new IllegalArgumentException();
-						} 
-						arquivo = new File(hash.get("root_dir").replace(".",System.getProperty("user.dir")).replace("/", "\\"));
-						
-						if(!arquivo.isDirectory() || !arquivo.exists()){
-							input.close();
-							System.out.println("ERRO");
-							throw new IllegalArgumentException();
-						}
-						
-						try{
-							int porta = Integer.parseInt(hash.get("port"));
-						}
-						catch(Exception e){
-							input.close();
-							System.out.println("ERRO");
-							throw new IllegalArgumentException();
-						}
-						
-						if(hash.get("port").length() > 5){
-							input.close();
-							System.out.println("ERRO");
-							throw new IllegalArgumentException();
-						}
-						
-						System.out.println(hash.get("port") + ":" 
-						+ hash.get("root_dir").replace("/", "\\").replace(".",System.getProperty("user.dir")) + NOME_INDEX);
-						
-						input.close();
-					} catch (IOException e2) {
-						System.out.println("ERRO");
-						throw new IllegalArgumentException(e2);
-					}
-				} catch (FileNotFoundException e1) {
-					System.out.println("ERRO");
-					throw new IllegalArgumentException(e1);
-				}
-			}
-			
-			
 		}
 		
-		if(args1 == null){
+		if (!arquivo.exists() || arquivo.isDirectory()) {
 			System.out.println("ERRO");
 			throw new IllegalArgumentException();
-		} else {
-			String nomeArquivo = args1[0];
-			arquivo = new File(nomeArquivo);
-			if (!arquivo.exists() || arquivo.isDirectory()) {
+		}
+		
+		return arquivo;
+		
+	}
+	
+	public static Map<String, String> lerArquivo(File arquivo){
+		
+		try {
+			reader = new FileReader(arquivo);
+			try {
+				input = new BufferedReader(reader);
+				line = input.readLine();
+
+				while (line != null) {
+					int total = 0;
+					for (int i = 0; i < line.length(); i++) {
+						if (line.charAt(i) == '=') {
+							total++;
+						}
+					}
+					if (total != 1) {
+						System.out.println("ERRO");
+						input.close();
+						throw new IllegalArgumentException();
+					}
+					
+					par = line.split("=");
+					hash.put(par[0].trim(), par[1].trim());
+					line = input.readLine();	
+
+				}input.close();
+
+			}catch (IOException e2){
+				System.out.println("ERRO");
+				throw new IllegalArgumentException(e2);
+			}
+		}catch (FileNotFoundException e1) {
+			System.out.println("ERRO");
+			throw new IllegalArgumentException(e1);
+		}
+		
+		return hash;
+	}
+	
+	public static void verificaRoot(Map<String, String> mapa){
+		
+		String caminhoRelativo = null;
+		
+		if(!hash.containsKey("root_dir")){
+			System.out.println("ERRO");
+			throw new IllegalArgumentException();
+		}
+		
+		caminhoRelativo = hash.get("root_dir").replace(".",System.getProperty("user.dir")).replace('/', File.separatorChar);
+		arquivo = new File(caminhoRelativo);
+
+		if(!arquivo.isDirectory() || !arquivo.exists()){
+			System.out.println("ERRO");
+			throw new IllegalArgumentException();
+		}
+		
+	}
+	
+	public static void verificaPort(Map<String, String> mapa){
+		
+		if(!hash.containsKey("port")){
+			System.out.println("ERRO");
+			throw new IllegalArgumentException();
+		}
+		
+		try{
+			Integer.parseInt(hash.get("port"));
+		}catch(Exception e3){
+			System.out.println("ERRO");
+			throw new IllegalArgumentException();
+		}
+		
+		if(hash.get("port").length() > 5){
+			System.out.println("ERRO");
+			throw new IllegalArgumentException();
+		}
+		
+	}
+	
+	public static Map<String, String> lerArquivoRequisicao(File arquivo){
+		
+		String[] parametros = null;
+		int total = 0;
+		int totallinha = 0;
+		
+		try {
+			reader = new FileReader(arquivo);
+				try {
+					input = new BufferedReader(reader);
+					line = input.readLine();
+					
+					while (line != null && totallinha != 2) {
+						line = line.trim();
+						total = 0;
+	
+						for (int i = 0; i < line.length(); i++) {
+							if (line.charAt(i) == ' ') {
+								total++;
+							}
+						}
+						if (total == 2) {
+							parametros = new String[3];
+							parametros = line.split(" ");
+							hash.put(parametros[0].trim(), parametros[1].trim() + " " + parametros[2].trim());
+							totallinha++;
+						} else if(total == 1) {
+							parametros = new String[2];
+							parametros = line.split(" ");
+							hash.put(parametros[0].trim(), parametros[1].trim());
+							totallinha++;
+						}
+						
+						line = input.readLine();
+					}
+					
+					input.close();
+				}catch (IOException e2) {
+					System.out.println("ERRO");
+					throw new IllegalArgumentException(e2);
+				}
+		} catch (FileNotFoundException e1) {
+			System.out.println("ERRO");
+			throw new IllegalArgumentException(e1);
+		}
+		
+		return hash;
+	}
+	
+	public static void verificaGet(Map<String, String> mapa){
+		
+		if(!hash.containsKey("GET")){
+			System.out.println("ERRO");
+			throw new IllegalArgumentException();
+		}
+		
+		String[] get = new String[2];
+		get = hash.get("GET").split(" ");
+		
+		String path = get[0];
+		int total = 0;
+		int posicao = -1;
+		
+			for (int i = 0; i < path.length(); i++) {
+				if (path.charAt(i) == '/') {
+					if(i == 0){
+						posicao = i;
+					}
+					total++;
+				}
+			}
+			if (posicao != 0 || total < 1) {
 				System.out.println("ERRO");
 				throw new IllegalArgumentException();
-			} else {
-				try {
-					reader = new FileReader(arquivo);
-					try {
-						input = new BufferedReader(reader);
-						line = input.readLine();
+			}
+			
+			String protocol = get[1];
 
-						while (line != null) {
-							int total = 0;
-							for (int i = 0; i < line.length(); i++) {
-								if (line.charAt(i) == '=') {
-									total++;
-								}
-							}
-							if (total != 1) {
-								System.out.println("ERRO");
-								input.close();
-								throw new IllegalArgumentException();
-							}
-							
-							par = line.split("=");
-							hash.put(par[0].trim(), par[1].trim());
-							line = input.readLine();							
-						}
-						
-						if(!hash.containsKey("GET") || !hash.containsKey("Host")){
-							input.close();
-							System.out.println("ERRO");
-							throw new IllegalArgumentException();
-						} 
-						arquivo = new File(hash.get("GET").replace(".",System.getProperty("user.dir")).replace("/", "\\"));
-						
-						if(!arquivo.isDirectory() || !arquivo.exists()){
-							input.close();
-							System.out.println("ERRO");
-							throw new IllegalArgumentException();
-						}
-					
-						System.out.println(hash.get("GET").replace("/", "\\").replace(".",System.getProperty("user.dir")) + NOME_INDEX);
-						
-						input.close();
-					} catch (IOException e2) {
-						System.out.println("ERRO");
-						throw new IllegalArgumentException(e2);
-					}
-				} catch (FileNotFoundException e1) {
-					System.out.println("ERRO");
-					throw new IllegalArgumentException(e1);
+			if(!protocol.equalsIgnoreCase("http/1.1")){
+				System.out.println("ERRO");
+				throw new IllegalArgumentException();
+			}
+	}
+	
+	public static void verificaHost(Map<String, String> mapa){
+		
+		int total = 0;
+		
+		if(!hash.containsKey("Host:")){
+			System.out.println("ERRO");
+			throw new IllegalArgumentException();
+		}
+		
+		String host = hash.get("Host:");
+		
+			for (int i = 0; i < host.length(); i++) {
+				if (host.charAt(i) == '.') {
+					total++;
 				}
-			} 
+			}
+			if (total < 2) {
+				System.out.println("ERRO");
+				throw new IllegalArgumentException();
+			}
 		
 	}
-		
-	}
+	
 }
+
+	
+			
+

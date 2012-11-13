@@ -31,15 +31,20 @@ public class MainTest {
 		String[] args1 = null;
 		
 		if(argumento != null){
+			
 			args = new String[1];
 			args[0] = argumento;
 			if(argumento2 != null){
 				args1 = new String[1];
 				args1[0] = argumento2;
 			}
+		}else{
+			System.out.println("ERRO");
+			throw new IllegalArgumentException();
 		}
 		
 		Main.main(args, args1);
+				
 	}
 	
 	@Test

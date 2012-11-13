@@ -1,6 +1,5 @@
- GET ./index.html http/1.1
-     Host: www.google.com
-     
+ GET /index.html http/1.1
+	 Host: www.google.com
      HTTP/1.0 200 OK
      Date: 
      Server: 
