@@ -48,10 +48,6 @@ public class ListaDiretorio {
 			conteudo.add(ordenado[y]);
 		}
 		
-		for(int i = 0; i <= ordenado.length; i++){
-			System.out.println(conteudo.getItem(i));
-		}
-		
 		return conteudo;
 		
 	}
