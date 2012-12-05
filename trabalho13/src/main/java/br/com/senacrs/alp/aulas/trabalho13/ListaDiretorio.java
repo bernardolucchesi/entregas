@@ -39,7 +39,7 @@ public class ListaDiretorio {
 	public List escreveDir(String path){
 		
 		List conteudo = new List();
-		String[] ordenado = orderList(path);
+		String[] ordenado = retornaLista(path);
 		
 		conteudo.add("list: " + path);
 		conteudo.add("total: " + ordenado.length);
@@ -56,37 +56,62 @@ public class ListaDiretorio {
 		
 	}
 	
-	public String[] orderList(String path){
+	public String[] retornaLista(String path){
 
 		File arq = new File(path);
 		String[] totalarquivos = arq.list();
 		File ord = null;
 		String absolut = null;
-		boolean troca = false;
+		List ordDir = new List();
+		List ordArq = new List();
+		String[] diretorios = null;
+		String[] arquivos = null;
 		
-		for(int i = 0; i < totalarquivos.length -1; i++){
-			
-			if(totalarquivos[i].compareTo(totalarquivos[i+1]) < 0){
-				String aux = totalarquivos[i];
-				totalarquivos[i] = totalarquivos[i+1];
-				totalarquivos[i+1] = aux;
+		for(int i = 0, y = 0, z = 0; i < totalarquivos.length; i++){
+			absolut = path + File.separator + totalarquivos[i];
+			ord = new File(absolut);
+			if(ord.isDirectory()){
+				ordDir.add("d " + totalarquivos[i]);
+				y++;
+			}else if(ord.isFile()){
+				ordArq.add("a " + totalarquivos[i]);
 			}
 		}
 		
-		do{
-			troca = false;
-			for(int i = 0; i < totalarquivos.length - 1; i++){
-				absolut = path + File.separator + totalarquivos[i];
-				ord = new File(absolut);
-				if(ord.isDirectory()){
-					String aux = totalarquivos[i];
-					totalarquivos[i] = totalarquivos[i+1];
-					totalarquivos[i+1] = aux;
-					//troca = true;
-				}
+		if(ordDir != null){
+			diretorios = orderList(ordDir);
+		}
+		
+		if(ordArq != null){
+			arquivos = orderList(ordArq);
+		}
+		
+		for(int i = 0, y = 0, z = 0; i < totalarquivos.length; i++){
+			if(z < diretorios.length){
+				totalarquivos[i] = diretorios[z];
+				z++;
+			}else if(y < arquivos.length){
+				totalarquivos[i] = arquivos[y];
+				y++;
 			}
-		}while(troca);
+		}
 		
 		return totalarquivos;
+	}
+	
+	public String[] orderList(List arg){
+		
+		String aux = null;
+		String[] ordenacao = arg.getItems();
+		
+		for(int i = 0; i < ordenacao.length - 1; i++){
+			if(ordenacao[i].compareTo(ordenacao[i+1]) > 0){
+				aux = ordenacao[i];
+				ordenacao[i] = ordenacao[i+1];
+				ordenacao[i+1] = aux;
+			}
+		}
+		
+		return ordenacao;
 	}
 }
